@@ -21,16 +21,16 @@ function nb_mailchimp_subscribe_to_list( $email, $status, $list_id, $api_key, $m
 		'status'        => $status,
 		'merge_fields'  => $merge_fields
 	);
-	$mch_api = curl_init(); // initialize cURL connection
+	$mch_api = curl_init();
 	curl_setopt($mch_api, CURLOPT_URL, 'https://' . substr($api_key,strpos($api_key,'-')+1) . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/' . md5(strtolower($data['email_address'])));
 	curl_setopt($mch_api, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Authorization: Basic '.base64_encode( 'user:'.$api_key )));
 	curl_setopt($mch_api, CURLOPT_USERAGENT, 'PHP-MCAPI/2.0');
-	curl_setopt($mch_api, CURLOPT_RETURNTRANSFER, true); // return the API response
-	curl_setopt($mch_api, CURLOPT_CUSTOMREQUEST, 'PUT'); // method PUT
+	curl_setopt($mch_api, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($mch_api, CURLOPT_CUSTOMREQUEST, 'PUT');
 	curl_setopt($mch_api, CURLOPT_TIMEOUT, 10);
 	curl_setopt($mch_api, CURLOPT_POST, true);
 	curl_setopt($mch_api, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($mch_api, CURLOPT_POSTFIELDS, json_encode($data) ); // send data in json
+	curl_setopt($mch_api, CURLOPT_POSTFIELDS, json_encode($data) );
  
 	$result = curl_exec($mch_api);
 	return $result;
@@ -52,16 +52,16 @@ function nb_mailchimp_check_status( $email, $status, $list_id, $api_key){
     	'email_address' => $email,
 		'status'        => $status
 	);
-	$mch_api = curl_init(); // initialize cURL connection
+	$mch_api = curl_init();
 	curl_setopt($mch_api, CURLOPT_URL, 'https://' . substr($api_key,strpos($api_key,'-')+1) . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/' . md5(strtolower($data['email_address'])));
 	curl_setopt($mch_api, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Authorization: Basic '.base64_encode( 'user:'.$api_key )));
 	curl_setopt($mch_api, CURLOPT_USERAGENT, 'PHP-MCAPI/2.0');
-	curl_setopt($mch_api, CURLOPT_RETURNTRANSFER, true); // return the API response
-	curl_setopt($mch_api, CURLOPT_CUSTOMREQUEST, 'GET'); // method GET
+	curl_setopt($mch_api, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($mch_api, CURLOPT_CUSTOMREQUEST, 'GET');
 	curl_setopt($mch_api, CURLOPT_TIMEOUT, 10);
 	curl_setopt($mch_api, CURLOPT_POST, true);
 	curl_setopt($mch_api, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($mch_api, CURLOPT_POSTFIELDS, json_encode($data) ); // send data in json
+	curl_setopt($mch_api, CURLOPT_POSTFIELDS, json_encode($data) );
  	$response = curl_exec($mch_api);
 	$result = curl_getinfo($mch_api, CURLINFO_HTTP_CODE);
 	return $result;
@@ -139,14 +139,11 @@ function nb_order_status_changed( $id, $status = 'new', $new_status = 'pending' 
 
 
 add_action( 'woocommerce_checkout_update_order_meta', 'nb_order_status_changed' , 1000, 1 );
+
 /**
- * WooCommerce 2.2 support for wc_get_order
- *
- * @since 1.2.1
- *
- * @access private
+ * Returns the order by providing the order id
  * @param int $order_id
- * @return void
+ * @return Order object
  */
 function nb_wc_get_order( $order_id ) {
 	if ( function_exists( 'wc_get_order' ) ) {
@@ -169,6 +166,7 @@ function nb_add_checkout_fields( $checkout_fields ) {
 }
 
 add_filter( 'woocommerce_checkout_fields', 'nb_add_checkout_fields' );
+
 /**
  * When the checkout form is submitted, save opt-in value.
  *
